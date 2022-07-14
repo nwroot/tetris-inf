@@ -2,24 +2,56 @@
 #include <SDL2/SDL_image.h>
 #include <stdbool.h>
 
+#include "tetris.h"
+#include "render.h"
 #include "util.h"
+
+#define RES_X 1366
+#define RES_y 768
 
 int main() {
     SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO);
     IMG_Init(IMG_INIT_PNG);
     
-    SDL_Window *window = SDL_CreateWindow("Test", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 640, 480, SDL_WINDOW_OPENGL);
+    SDL_Window *window = SDL_CreateWindow("Test", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1366, 768, SDL_WINDOW_OPENGL);
     
     SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
     
     SDL_Texture *bg = load_texture_from_file("assets/udec.png", renderer);
-    SDL_Texture *object = load_texture_from_file("assets/tetromino_2x2.png", renderer);
     
-    SDL_Rect pos;
-   	pos.x = 640/2;
-   	pos.y = 0;
-   	pos.w = 40;
-   	pos.h = 40;
+    
+    struct tetris_state state;
+    state.grid = malloc(sizeof(struct tetris_slot) * 16 * 10);
+    
+    memset(state.grid, 0, sizeof(struct tetris_slot) * 16 * 10);
+    state.width = 10;
+    state.height = 16;
+    
+    state.score = 0;
+    state.lines = 0;
+    state.level = 0;
+    state.res_x = 1366;
+    state.res_y = 768;
+    
+    struct tetris_piece piece = standard_pieces[1];
+    
+    for(int i = 0; i < 4; i++) {
+        for(int j = 0; j < 4; j++) {
+            printf("%d ", piece.piece_def[i][j]);
+        }
+        printf("\n");
+    }
+    
+    do_rot_matrix(&piece);
+    for(int i = 0; i < 4; i++) {
+        for(int j = 0; j < 4; j++) {
+            printf("%d ", piece.piece_def[i][j]);
+        }
+        printf("\n");
+    }
+    
+    state.curr = standard_pieces[1];
+    
     
     bool loop = true;
     while(loop) {
@@ -32,28 +64,23 @@ int main() {
             } else if(event.type == SDL_KEYDOWN) {
             	switch(event.key.keysym.sym) {
             		case SDLK_UP:
-            			pos.y += 1;
             			break;
             		case SDLK_DOWN:
-            			pos.y -= 1;
             			break;
             		case SDLK_RIGHT:
-            			pos.x += 1;
             			break;
             		case SDLK_LEFT:
-            			pos.x -= 1;
             			break;
             		case SDLK_SPACE:
-            			pos.x = 640/2;
-            			pos.y = 0;
+            		    do_rot_matrix(&state.curr);
             		//default:
             	}
             }
         }
         
-        pos.y += 1;
-        SDL_RenderCopy(renderer, bg, NULL, NULL);
-        SDL_RenderCopy(renderer, object, NULL, &pos);
+        SDL_RenderCopy(renderer, bg, NULL, NULL); // replace by draw_bg()
+        draw_grid(&state, renderer, true);
+        //SDL_RenderCopy(renderer, object, NULL, &pos);
         
         SDL_RenderPresent(renderer);
         SDL_Delay(16);
