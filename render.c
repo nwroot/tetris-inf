@@ -47,8 +47,8 @@ void draw_grid(struct tetris_state *state, SDL_Renderer *renderer, bool draw_cur
             for(int j = 0; j < 4; j++) {
                 if(state->curr.piece_def[i][j] != 0) {
                 
-                    piece.x = outline.x + j * square_sz;
-                    piece.y = outline.y + i * square_sz;
+                    piece.x = outline.x + (j + state->curr_x) * square_sz;
+                    piece.y = outline.y + (i + state->curr_y) * square_sz;
                     piece.w = square_sz;
                     piece.h = square_sz;
                     SDL_RenderFillRect(renderer, &piece);

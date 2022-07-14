@@ -52,9 +52,12 @@ int main() {
     
     state.curr = standard_pieces[1];
     
+    state.curr_x = 0;
+    state.curr_y = 0;
     
     bool loop = true;
     while(loop) {
+    	uint32_t start_t = SDL_GetTicks();
         SDL_RenderClear(renderer);
         
         SDL_Event event;
@@ -64,12 +67,16 @@ int main() {
             } else if(event.type == SDL_KEYDOWN) {
             	switch(event.key.keysym.sym) {
             		case SDLK_UP:
+            			state.curr_y -= 1;
             			break;
             		case SDLK_DOWN:
+            			state.curr_y += 1;
             			break;
             		case SDLK_RIGHT:
+            			state.curr_x += 1;
             			break;
             		case SDLK_LEFT:
+            			state.curr_x -= 1;
             			break;
             		case SDLK_SPACE:
             		    do_rot_matrix(&state.curr);
@@ -83,7 +90,12 @@ int main() {
         //SDL_RenderCopy(renderer, object, NULL, &pos);
         
         SDL_RenderPresent(renderer);
-        SDL_Delay(16);
+        
+        uint32_t end_t = SDL_GetTicks();
+        if(end_t - start_t < 16) {
+        	SDL_Delay(end_t - start_t);
+       	}
+        //SDL_Delay(16);
     }
     return 0;
 }
