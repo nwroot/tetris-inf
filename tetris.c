@@ -149,7 +149,7 @@ bool check_collision(struct tetris_piece *piece, struct tetris_state *state) {
         for(int j = 0; j < piece->size_x; j++) {
             if(piece->piece_def[i][j] && (state->curr_x + j < 0 || state->curr_x + j >= state->width || state->curr_y + i < 0 || state->curr_y + i >= state->height)) {
                 printf("OOB\n");
-                return 1;
+                return 2;
             }
         }
     }
