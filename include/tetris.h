@@ -20,6 +20,8 @@ struct tetris_piece {
 struct tetris_piece {
     uint32_t piece_def[4][4];
     bool use_custom_rot;
+    uint32_t size_x;
+    uint32_t size_y;
     uint32_t rot_center_x;
     uint32_t rot_center_y;
 };
@@ -32,8 +34,8 @@ struct tetris_state {
     
     struct tetris_piece curr;
     struct queue *piece_queue;
-    uint32_t curr_x;
-    uint32_t curr_y;
+    int32_t curr_x;
+    int32_t curr_y;
     
     uint32_t score;
     uint32_t lines;
@@ -44,3 +46,4 @@ struct tetris_state {
 };
 void do_rot_matrix(struct tetris_piece *piece);
 extern struct tetris_piece standard_pieces[7];
+bool check_collision(struct tetris_piece *piece, struct tetris_state *state);

@@ -18,6 +18,8 @@ struct tetris_piece standard_pieces[7] = {
         { 0, 0, 0, 0 },
     },
     .use_custom_rot = true,
+    .size_x = 3,
+    .size_y = 3,
     .rot_center_x = 1,
     .rot_center_y = 1
 },
@@ -104,6 +106,8 @@ void do_rot_matrix(struct tetris_piece *piece) {
             
             for(int i = 0; i < 3; i++) memcpy(piece->piece_def[i], mat[i], sizeof(uint32_t) * 3);
         }
+    } else {
+        rotar((int *)piece->piece_def, 4);
     }
     /*
     
@@ -128,6 +132,23 @@ void do_rot_matrix(struct tetris_piece *piece) {
         }
     }
     */
+}
+
+bool check_collision(struct tetris_piece *piece, struct tetris_state *state) {
+    if(state->curr_x < 0 || (state->curr_x + piece->size_x) > state->width || (state->curr_y + piece->size_y) > state->height || state->curr_y < 0) {
+        printf("OOB\n");
+        return 1;
+    }
+    for(int i = 0; i < piece->size_y; i++) {
+        for(int j = 0; j < piece->size_x; j++) {
+            if(piece->piece_def[i][j] && state->grid[(state->curr_y + i) * state->width + (state->curr_x + j)].state) {
+                printf("Collision\n");
+                return 1;
+            }
+        }
+    }
+
+    return 0;
 }
         
         

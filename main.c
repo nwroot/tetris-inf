@@ -68,15 +68,19 @@ int main() {
             	switch(event.key.keysym.sym) {
             		case SDLK_UP:
             			state.curr_y -= 1;
+            			if(check_collision(&state.curr, &state)) state.curr_y += 1;
             			break;
             		case SDLK_DOWN:
             			state.curr_y += 1;
+            			if(check_collision(&state.curr, &state)) state.curr_y -= 1;
             			break;
             		case SDLK_RIGHT:
             			state.curr_x += 1;
+            			if(check_collision(&state.curr, &state)) state.curr_x -= 1;
             			break;
             		case SDLK_LEFT:
             			state.curr_x -= 1;
+            			if(check_collision(&state.curr, &state)) state.curr_x += 1;
             			break;
             		case SDLK_SPACE:
             		    do_rot_matrix(&state.curr);
@@ -84,7 +88,7 @@ int main() {
             	}
             }
         }
-        
+        check_collision(&state.curr, &state);
         SDL_RenderCopy(renderer, bg, NULL, NULL); // replace by draw_bg()
         draw_grid(&state, renderer, true);
         //SDL_RenderCopy(renderer, object, NULL, &pos);
