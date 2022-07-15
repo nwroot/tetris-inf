@@ -31,6 +31,8 @@ struct tetris_piece standard_pieces[7] = {
         { 0, 0, 0, 0 },
     },
     .use_custom_rot = true,
+     .size_x = 3,
+    .size_y = 3,
     .rot_center_x = 1,
     .rot_center_y = 1
 },
@@ -42,6 +44,8 @@ struct tetris_piece standard_pieces[7] = {
         { 0, 0, 0, 0 },
         { 0, 0, 0, 0 },
     },
+    .size_x = 2,
+    .size_y = 2,
     .use_custom_rot = true,
     .rot_center_x = NO_ROT,
     .rot_center_y = NO_ROT
@@ -54,6 +58,8 @@ struct tetris_piece standard_pieces[7] = {
         { 0, 0, 0, 0 },
     },
     .use_custom_rot = true,
+     .size_x = 3,
+    .size_y = 3,
     .rot_center_x = 1,
     .rot_center_y = 1
 },
@@ -65,6 +71,8 @@ struct tetris_piece standard_pieces[7] = {
         { 0, 0, 0, 0 },
     },
     .use_custom_rot = true,
+    .size_x = 3,
+    .size_y = 3,
     .rot_center_x = 1,
     .rot_center_y = 1
 },
@@ -76,6 +84,8 @@ struct tetris_piece standard_pieces[7] = {
         { 0, 0, 0, 0 },
     },
     .use_custom_rot = true,
+    .size_x = 3,
+    .size_y = 3,
     .rot_center_x = 1,
     .rot_center_y = 1
 }
@@ -135,9 +145,17 @@ void do_rot_matrix(struct tetris_piece *piece) {
 }
 
 bool check_collision(struct tetris_piece *piece, struct tetris_state *state) {
+    for(int i = 0; i < piece->size_y; i++) {
+        for(int j = 0; j < piece->size_x; j++) {
+            if(piece->piece_def[i][j] && (state->curr_x + j < 0 || state->curr_x + j >= state->width || state->curr_y + i < 0 || state->curr_y + i >= state->height)) {
+                printf("OOB\n");
+                return 1;
+            }
+        }
+    }
     if(state->curr_x < 0 || (state->curr_x + piece->size_x) > state->width || (state->curr_y + piece->size_y) > state->height || state->curr_y < 0) {
-        printf("OOB\n");
-        return 1;
+        //printf("OOB_old\n");
+        //return 1;
     }
     for(int i = 0; i < piece->size_y; i++) {
         for(int j = 0; j < piece->size_x; j++) {
