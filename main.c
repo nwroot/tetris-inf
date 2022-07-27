@@ -1,10 +1,11 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <stdbool.h>
-
+#include <stdlib.h>
 #include "tetris.h"
 #include "render.h"
 #include "util.h"
+#include "random.h"
 
 #define RES_X 1366
 #define RES_y 768
@@ -33,7 +34,9 @@ int main() {
     state.res_x = 1366;
     state.res_y = 768;
     
-    struct tetris_piece piece = standard_pieces[1];
+
+    //struct tetris_piece piece = standard_pieces[1];
+    struct tetris_piece piece = standard_pieces[randint(0,7)];
     
     for(int i = 0; i < 4; i++) {
         for(int j = 0; j < 4; j++) {
@@ -50,7 +53,8 @@ int main() {
         printf("\n");
     }
     
-    state.curr = standard_pieces[1];
+    //state.curr = standard_pieces[1];
+    state.curr = standard_pieces[randint(0,7)];
     
     state.curr_x = 0;
     state.curr_y = 0;
