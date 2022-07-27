@@ -14,7 +14,7 @@ int main() {
     IMG_Init(IMG_INIT_PNG);
     
     SDL_Window *window = SDL_CreateWindow("Test", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1366, 768, SDL_WINDOW_OPENGL);
-    
+
     SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
     
     SDL_Texture *bg = load_texture_from_file("assets/udec.png", renderer);
@@ -82,9 +82,28 @@ int main() {
             			state.curr_x -= 1;
             			if(check_collision(&state.curr, &state)) state.curr_x += 1;
             			break;
-            		case SDLK_SPACE:
+            		case SDLK_SPACE: //YA SI IGUAL HAY QUE ARREGLAR LA FUNCIÓN
             		    do_rot_matrix(&state.curr);
+                        int side_len = 0;
+                        if(check_collision(&state.curr, &state)==2){
+                            side_len = (1366-state.width)/2;
+                            if(state.curr_x >= state.width+side_len){
+                               state.curr_x -= 1; 
+                               side_len = 0;
+                            } 
+                            if(state.curr_x <= 1366-state.width-side_len){
+                               state.curr_x += 1;
+                               side_len = 0;
+                            } 
+                        }
+                        if(check_collision(&state.curr, &state)==1 && side_len==0){
+                            do_rot_matrix(&state.curr);
+                            do_rot_matrix(&state.curr);
+                            do_rot_matrix(&state.curr);
+                        }
+
             		//default:
+                        
             	}
             }
         }
