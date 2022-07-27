@@ -84,16 +84,21 @@ int main() {
             			break;
             		case SDLK_SPACE: 
             		    do_rot_matrix(&state.curr);
+                        printf("%d /", state.curr_x);
                         if(check_collision(&state.curr, &state)){
-                            printf("ola: %d", state.curr_x);
-                            if(state.curr_x >= state.width){
-                                printf("right");
+                            if(state.curr_x > state.width){
+                                printf("left");
                                state.curr_x += 1; 
                             } 
-                            if(state.curr_x < 0){
-                                printf("left");
-                               state.curr_x += 1;
-                            } 
+                            if(state.curr_x == 8 && check_collision(&state.curr, &state) || state.curr_x == 7 && check_collision(&state.curr, &state)){
+                                printf("right");
+                               state.curr_x -= 1;
+                            }
+                            if(check_collision(&state.curr, &state)){
+                                do_rot_matrix(&state.curr);
+                                do_rot_matrix(&state.curr);
+                                do_rot_matrix(&state.curr);
+                            }
                         }
                         
 
