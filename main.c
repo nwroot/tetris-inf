@@ -82,25 +82,21 @@ int main() {
             			state.curr_x -= 1;
             			if(check_collision(&state.curr, &state)) state.curr_x += 1;
             			break;
-            		case SDLK_SPACE: //YA SI IGUAL HAY QUE ARREGLAR LA FUNCIÓN
+            		case SDLK_SPACE: 
             		    do_rot_matrix(&state.curr);
-                        int side_len = 0;
-                        if(check_collision(&state.curr, &state)==2){
-                            side_len = (1366-state.width)/2;
-                            if(state.curr_x >= state.width+side_len){
-                               state.curr_x -= 1; 
-                               side_len = 0;
+                        if(check_collision(&state.curr, &state)){
+                            printf("ola: %d", state.curr_x);
+                            if(state.curr_x >= state.width){
+                                printf("right");
+                               state.curr_x += 1; 
                             } 
-                            if(state.curr_x <= 1366-state.width-side_len){
+                            if(state.curr_x < 0){
+                                printf("left");
                                state.curr_x += 1;
-                               side_len = 0;
                             } 
                         }
-                        if(check_collision(&state.curr, &state)==1 && side_len==0){
-                            do_rot_matrix(&state.curr);
-                            do_rot_matrix(&state.curr);
-                            do_rot_matrix(&state.curr);
-                        }
+                        
+
 
             		//default:
                         
