@@ -15,7 +15,6 @@ int main() {
     IMG_Init(IMG_INIT_PNG);
     
     SDL_Window *window = SDL_CreateWindow("Test", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1366, 768, SDL_WINDOW_OPENGL);
-
     SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
     
     SDL_Texture *bg = load_texture_from_file("assets/udec.png", renderer);
@@ -34,10 +33,12 @@ int main() {
     state.res_x = 1366;
     state.res_y = 768;
     
+    state.last_tick_ms = 0;
+    state.last_tick = 0;
 
     //struct tetris_piece piece = standard_pieces[1];
     struct tetris_piece piece = standard_pieces[randint(0,7)];
-    
+    /*
     for(int i = 0; i < 4; i++) {
         for(int j = 0; j < 4; j++) {
             printf("%d ", piece.piece_def[i][j]);
@@ -60,7 +61,14 @@ int main() {
     state.curr_y = 0;
     
     bool loop = true;
+    */
+    state.curr = standard_pieces[1];
+    bool loop = true;
     while(loop) {
+        if(!tetris_step(&state)) loop = false;
+        tetris_render(&state, renderer);
+    
+    /*
     	uint32_t start_t = SDL_GetTicks();
         SDL_RenderClear(renderer);
         
@@ -124,6 +132,7 @@ int main() {
         	SDL_Delay(end_t - start_t);
        	}
         //SDL_Delay(16);
+    */
     }
     return 0;
 }

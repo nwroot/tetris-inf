@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <stddef.h>
+#include <SDL2/SDL.h>
 
 struct tetris_slot {
     uint32_t state: 8;
@@ -42,8 +43,14 @@ struct tetris_state {
     uint32_t level;
     uint32_t res_x;
     uint32_t res_y;
+    
+    uint32_t last_tick_ms;
+    uint32_t last_tick;
     //struct tetris_music *music;
 };
+
+int tetris_step(struct tetris_state *tetris);
+void tetris_render(struct tetris_state *tetris, SDL_Renderer *renderer);
 void do_rot_matrix(struct tetris_piece *piece);
 extern struct tetris_piece standard_pieces[7];
 bool check_collision(struct tetris_piece *piece, struct tetris_state *state);

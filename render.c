@@ -57,6 +57,6 @@ void draw_grid(struct tetris_state *state, SDL_Renderer *renderer, bool draw_cur
         }
         //SDL_RenderFillRect(renderer, &piece);
     }
-    
+    SDL_RenderPresent(renderer);
     return;
 }
