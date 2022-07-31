@@ -122,11 +122,22 @@ int tetris_step(struct tetris_state *tetris) {
                         if(check_collision(&tetris->curr, tetris)) tetris->curr_x -= 1;
                         break;
                     case SDLK_SPACE:
-                        do_rot_matrix(&tetris->curr);
-                        if(check_collision(&tetris->curr, tetris)) {
-                            do_rot_matrix(&tetris->curr);
-                            do_rot_matrix(&tetris->curr);
-                            do_rot_matrix(&tetris->curr);
+                        do_rot_matrix(&state.curr);
+                        printf("%d /", state.curr_x);
+                        if(check_collision(&state.curr, &state)){
+                            if(state.curr_x > state.width){
+                                printf("left");
+                               state.curr_x += 1; 
+                            } 
+                            if(state.curr_x == 8 && check_collision(&state.curr, &state) || state.curr_x == 7 && check_collision(&state.curr, &state)){
+                                printf("right");
+                               state.curr_x -= 1;
+                            }
+                            if(check_collision(&state.curr, &state)){
+                                do_rot_matrix(&state.curr);
+                                do_rot_matrix(&state.curr);
+                                do_rot_matrix(&state.curr);
+                            }
                         }
                         break;
                 }
