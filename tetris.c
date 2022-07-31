@@ -147,12 +147,13 @@ int tetris_step(struct tetris_state *tetris) {
     tetris->last_tick++;
     
     // move piece
-    if(tetris->last_tick % 15 == 0) {
+    if(tetris->last_tick % 20 == 0) {
         tetris->curr_y += 1;
         int res = check_collision(&tetris->curr, tetris);
         if(res == 1 || res == 2) { // settle
             tetris->curr_y -= 1;
             tetris_settle(tetris);
+            tetris_clear_lines(tetris);
             tetris_new_piece(tetris);
         }
     }
@@ -165,6 +166,25 @@ void tetris_settle(struct tetris_state *tetris) {
         for(int j = 0; j < tetris->curr.size_x; j++) {
             if(tetris->curr.piece_def[i][j]) {
                 tetris->grid[(tetris->curr_y + i) * tetris->width + (tetris->curr_x + j)].state = 1;
+            }
+        }
+    }
+}
+
+void tetris_clear_lines(struct tetris_state *tetris) {
+    for(int i = 0; i < tetris->height; i++) {
+        bool line_complete = true;
+        for(int j = 0; j < tetris->width; j++) {
+            if(!tetris->grid[i * tetris->width + j].state) {
+                line_complete = false;
+                break;
+            }
+        }
+        if(line_complete) {
+            for(int j = i - 1; j >= 0; j--) {
+                for(int k = 0; k < tetris->width; k++) {
+                    tetris->grid[tetris->width * (j + 1) + k] = tetris->grid[tetris->width * j + k];
+                }
             }
         }
     }
