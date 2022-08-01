@@ -132,10 +132,11 @@ void writeScore(score *pts){
 
 	if(remove("puntajes.txt")==0){
 		FILE *f;
-		f = fopen("puntajes.txt","w");
+		f = fopen("puntajes.txt","wb");
 		for(int i=0; i<10; ++i){
 			if(info_numscores[i]){
-			 fprintf(f, "%d %s \n", info_numscores[i], pnames[i]);
+			 //fprintf(f, "%d %s \n", info_numscores[i], pnames[i]);
+				fwrite(pnames, sizeof(char), sizeof(pnames), f);
 			}
 		}
 		fclose(f);

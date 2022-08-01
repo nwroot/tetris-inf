@@ -1,6 +1,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <stdbool.h>
+#include <SDL2/SDL_mixer.h>
 
 #include "tetris.h"
 #include "render.h"
@@ -14,6 +15,11 @@ int main() {
     srand(time(0));
     SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO);
     IMG_Init(IMG_INIT_PNG);
+
+    Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048);
+
+    Mix_Music *backgroundsound = Mix_LoadMUS("Tetris 99 - Main Theme [TubeRipper.com].wav");
+
     
     SDL_Window *window = SDL_CreateWindow("Test", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1366, 768, SDL_WINDOW_OPENGL);
     SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
@@ -39,10 +45,15 @@ int main() {
 
     tetris_new_piece(&state);
     bool loop = true;
+
+    Mix_PlayMusic(backgroundsound, -1);
+    //-1 plays in loop
+
     while(loop) {
         if(!tetris_step(&state)) loop = false;
         tetris_render(&state, renderer);
     }
+    Mix_FreeMusic(backgroundsound);
     return 0;
 }
 
