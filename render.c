@@ -8,8 +8,7 @@ void draw_grid(struct tetris_state *state, SDL_Renderer *renderer, bool draw_cur
     
     outline.h = state->res_y - (state->res_y/20 * 2);
     outline.w = (outline.h / state->height) * state->width;
-    
-    
+
     outline.x = (state->res_x - outline.w)/2;
     outline.y = (state->res_y - outline.h)/2;
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
@@ -46,7 +45,6 @@ void draw_grid(struct tetris_state *state, SDL_Renderer *renderer, bool draw_cur
         for(int i = 0; i < 4; i++) {
             for(int j = 0; j < 4; j++) {
                 if(state->curr.piece_def[i][j] != 0) {
-                
                     piece.x = outline.x + (j + state->curr_x) * square_sz;
                     piece.y = outline.y + (i + state->curr_y) * square_sz;
                     piece.w = square_sz;
@@ -55,7 +53,6 @@ void draw_grid(struct tetris_state *state, SDL_Renderer *renderer, bool draw_cur
                 }
             }
         }
-        //SDL_RenderFillRect(renderer, &piece);
     }
     SDL_RenderPresent(renderer);
     return;

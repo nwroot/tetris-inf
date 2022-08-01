@@ -46,6 +46,9 @@ struct tetris_state {
     
     uint32_t last_tick_ms;
     uint32_t last_tick;
+    
+    uint32_t gravity_period;
+    uint32_t speed_mult;
     //struct tetris_music *music;
 };
 

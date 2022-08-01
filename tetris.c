@@ -121,6 +121,9 @@ int tetris_step(struct tetris_state *tetris) {
                         tetris->curr_x += 1;
                         if(check_collision(&tetris->curr, tetris)) tetris->curr_x -= 1;
                         break;
+                    case SDLK_DOWN:
+                        //tetris->speed_mult = 2;
+                        break;
                     case SDLK_SPACE:
                         do_rot_matrix(&tetris->curr);
                         if(check_collision(&tetris->curr, tetris)) {
@@ -133,10 +136,14 @@ int tetris_step(struct tetris_state *tetris) {
                 break;
         }
     }
-    tetris->last_tick++;
     
+    const uint8_t *keys = SDL_GetKeyboardState(NULL);
+    
+    if(keys[SDL_SCANCODE_DOWN]) tetris->speed_mult = 6;
+        
+    //printf("Tick: %d, Speed: %d, Mult: %d\n", tetris->last_tick, tetris->gravity_period, tetris->speed_mult);
     // move piece
-    if(tetris->last_tick % 20 == 0) {
+    if(tetris->last_tick % (tetris->gravity_period / tetris->speed_mult) == 0) {
         tetris->curr_y += 1;
         int res = check_collision(&tetris->curr, tetris);
         if(res == 1 || res == 2) { // settle
@@ -146,6 +153,8 @@ int tetris_step(struct tetris_state *tetris) {
             tetris_new_piece(tetris);
         }
     }
+    tetris->speed_mult = 1;
+    tetris->last_tick++;
     tetris->last_tick_ms = SDL_GetTicks();
     return 1;  
 }
@@ -160,7 +169,8 @@ void tetris_settle(struct tetris_state *tetris) {
     }
 }
 
-void tetris_clear_lines(struct tetris_state *tetris) {
+int tetris_clear_lines(struct tetris_state *tetris) {
+    int lines = 0;
     for(int i = 0; i < tetris->height; i++) {
         bool line_complete = true;
         for(int j = 0; j < tetris->width; j++) {
@@ -170,6 +180,7 @@ void tetris_clear_lines(struct tetris_state *tetris) {
             }
         }
         if(line_complete) {
+            lines++;
             for(int j = i - 1; j >= 0; j--) {
                 for(int k = 0; k < tetris->width; k++) {
                     tetris->grid[tetris->width * (j + 1) + k] = tetris->grid[tetris->width * j + k];
@@ -177,6 +188,11 @@ void tetris_clear_lines(struct tetris_state *tetris) {
             }
         }
     }
+    tetris->lines += lines;
+    tetris->score += lines * 100;
+    
+    printf("Lines: %d, Score: %d\n", tetris->lines, tetris->score);
+    return lines;
 }
 
 void tetris_new_piece(struct tetris_state *tetris) {
@@ -206,6 +222,7 @@ void rotar(int *mat, int n){
  
  
 void do_rot_matrix(struct tetris_piece *piece) {
+    if(piece->rot_center_x == NO_ROT) return;
     if(piece->use_custom_rot) {
         if(piece->rot_center_x == 1 && piece->rot_center_y == 1) {
             int mat[3][3];
@@ -230,7 +247,7 @@ bool check_collision(struct tetris_piece *piece, struct tetris_state *state) {
         for(int j = 0; j < piece->size_x; j++) {
             if(piece->piece_def[i][j] && state->curr_y + i >= state->height) return 2;
             if(piece->piece_def[i][j] && (state->curr_x + j < 0 || state->curr_x + j >= state->width || state->curr_y + i < 0 || state->curr_y + i >= state->height)) {
-                printf("OOB\n");
+                //printf("OOB\n");
                 return 3;
             }
         }
@@ -242,7 +259,7 @@ bool check_collision(struct tetris_piece *piece, struct tetris_state *state) {
     for(int i = 0; i < piece->size_y; i++) {
         for(int j = 0; j < piece->size_x; j++) {
             if(piece->piece_def[i][j] && state->grid[(state->curr_y + i) * state->width + (state->curr_x + j)].state) {
-                printf("Collision\n");
+                //printf("Collision\n");
                 return 1;
             }
         }

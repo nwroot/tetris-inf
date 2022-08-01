@@ -32,9 +32,12 @@ int main() {
     state.res_y = 768;
     
     state.last_tick_ms = 0;
-    state.last_tick = 0;
+    state.last_tick = 1;
+    
+    state.gravity_period = 60;
+    state.speed_mult = 1;
 
-    state.curr = standard_pieces[1];
+    tetris_new_piece(&state);
     bool loop = true;
     while(loop) {
         if(!tetris_step(&state)) loop = false;
