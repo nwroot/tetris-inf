@@ -1,12 +1,7 @@
-//#include "scores.h"
+#include "scores.h"
 #include<stdio.h>
 #include<stdlib.h>
 
-typedef struct{
-	int score;
-	char user_name[50];
-
-}score;
 
 void writeScore(score *pts){
 	int score = pts->score;
@@ -62,6 +57,14 @@ void writeScore(score *pts){
 	for(int i=0; i<10; ++i){
 		info_numscores[i] = atoi(ptscores[i]);
 	}
+
+	//TEST
+	for(int i=0; i<10; ++i){
+		for(int j=0; j<50; ++j){
+			printf("%c", info_names[i][j]);
+		}
+	}
+	
 
 	for(int i=0; i<10; ++i){
 		int posmenor = i;
@@ -122,21 +125,21 @@ void writeScore(score *pts){
 		}
 	}
 
-
-
-
 	char *pnames[10];
 	for(int i=0; i<10; ++i){
 		pnames[i] = &info_names[i][0];
 	}
 
+
 	if(remove("puntajes.txt")==0){
 		FILE *f;
-		f = fopen("puntajes.txt","wb");
+		f = fopen("puntajes.txt","w");
 		for(int i=0; i<10; ++i){
 			if(info_numscores[i]){
-			 //fprintf(f, "%d %s \n", info_numscores[i], pnames[i]);
-				fwrite(pnames, sizeof(char), sizeof(pnames), f);
+				for(int j=0; j<50; ++j){
+					fprintf(f, "%c", info_names[i][j]);
+				}
+			 fprintf(f, "%d %s \n", info_numscores[i], pnames[i]);
 			}
 		}
 		fclose(f);
@@ -151,14 +154,11 @@ void writeScore(score *pts){
 			printf("%c", info_names[i][j]);
 		}
 	}
-	for(int i=0; i<10; ++i){
-		printf("%s", pnames[i]);
-		printf("%d \n", info_numscores[i]);
-	}
+	
 	//end testing area
+	
 	//fprintf(fptr, "%d %s", score, name);	
 	//fprintf(fptr, "\n");
-	
 
 	
 }
@@ -248,10 +248,12 @@ void showScore(score *punt){
 		}
 	}
 
-
+	fclose(fptr);
 
 }
 
+
+/*
 //Testing area 2
 
 int main(){
@@ -265,6 +267,7 @@ int main(){
 	score list[10];
 	score *pl = list;
 	writeScore(pt);
+	/*
 	showScore(pl);
 	for(int i=0; i<10; ++i){
 		if(list[i].score !=0){
@@ -274,4 +277,7 @@ int main(){
 			}
 		}
 	}
+	
 }
+
+*/
