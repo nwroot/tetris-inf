@@ -1,5 +1,5 @@
 
-#include "random.h"
+#include"random.h"
 #include<stdio.h>
 #include<stdlib.h>
 #include<time.h>
@@ -11,3 +11,5 @@ int randint(int lower, int upper){
 	//Calculates range and sums to make it fit
 	return number;
 }
+
+
