@@ -18,7 +18,7 @@ int main() {
 
     Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048);
 
-    Mix_Music *backgroundsound = Mix_LoadMUS("Tetris 99 - Main Theme [TubeRipper.com].wav");
+    Mix_Music *backgroundsound = Mix_LoadMUS("tetris.wav");
 
     
     SDL_Window *window = SDL_CreateWindow("Tetris", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1366, 768, SDL_WINDOW_OPENGL);

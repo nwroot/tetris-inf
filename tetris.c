@@ -121,11 +121,19 @@ int tetris_step(struct tetris_state *tetris) {
                         break;
                     case SDLK_LEFT:
                         tetris->curr_x -= 1;
-                        if(check_collision(&tetris->curr, tetris)) tetris->curr_x += 1;
+                        if(check_collision(&tetris->curr, tetris) && !tetris->time_stop) tetris->curr_x += 1;
+                        else {
+                            int res = check_collision(&tetris->curr, tetris);
+                            if(res == 2 || res == 3) tetris->curr_y += 1;
+                        }
                         break;
                     case SDLK_RIGHT:
                         tetris->curr_x += 1;
-                        if(check_collision(&tetris->curr, tetris)) tetris->curr_x -= 1;
+                        if(check_collision(&tetris->curr, tetris) && !tetris->time_stop) tetris->curr_x -= 1;
+                        else {
+                            int res = check_collision(&tetris->curr, tetris);
+                            if(res == 2 || res == 3) tetris->curr_y -= 1;
+                        }
                         break;
                     case SDLK_DOWN:
                         if(tetris->time_stop) {
