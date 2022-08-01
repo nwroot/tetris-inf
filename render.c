@@ -1,5 +1,6 @@
 #include "render.h"
 #include "util.h"
+#include <SDL2/SDL_ttf.h>
 
 static SDL_Texture *bg = NULL;
 
@@ -87,6 +88,38 @@ void draw_grid(struct tetris_state *state, SDL_Renderer *renderer, bool draw_cur
         SDL_RenderFillRect(renderer, &rect);
     }
     
+    TTF_Init();
+
+    TTF_Font *font = TTF_OpenFont("ChakraPetch-Medium.ttf", 40);
+    SDL_Color color;
+    color.r = 0;
+    color.g = 0;
+    color.b = 0;
+    int score = state->score;
+    char String[128];
+    sprintf(String, "Score: %d", state->score);
+    SDL_Surface *text1 = TTF_RenderText_Solid(font, String, color);
+    SDL_Texture *textTexture = SDL_CreateTextureFromSurface(renderer, text1);
+    SDL_Rect textRect = {30, 30, text1->w, text1->h};
+
+    char String2[128];
+    sprintf(String2, "Lines: %d", state->lines);
+    SDL_Surface *text2 = TTF_RenderText_Solid(font, String2, color);
+    SDL_Texture *textTexture2 = SDL_CreateTextureFromSurface(renderer, text2);
+    SDL_Rect textRect2 = {30, 70, text2->w, text2->h};
+   
+    TTF_CloseFont(font);
+
+    SDL_RenderCopy(renderer, textTexture, NULL, &textRect);
+    SDL_RenderCopy(renderer, textTexture2, NULL, &textRect2);
+
+    SDL_FreeSurface(text1);
+    SDL_FreeSurface(text2);
+    SDL_DestroyTexture(textTexture);
+    SDL_DestroyTexture(textTexture2);
+
     SDL_RenderPresent(renderer);
+
+    TTF_Quit();
     return;
 }
