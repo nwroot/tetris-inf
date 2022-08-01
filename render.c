@@ -68,6 +68,17 @@ void draw_grid(struct tetris_state *state, SDL_Renderer *renderer, bool draw_cur
                 }
             }
         }
+        for(int i = 0; i < 4; i++) {
+            for(int j = 0; j < 4; j++) {
+                if(state->next.piece_def[i][j] != 0) {
+                    piece.x = outline.x + (j + (state->width + 1)) * square_sz + 1;
+                    piece.y = outline.y + (i) * square_sz + 1;
+                    piece.w = square_sz - 1;
+                    piece.h = square_sz - 1;
+                    SDL_RenderFillRect(renderer, &piece);
+                }
+            }
+        }
     }
     if(draw_stop_bar) {
         SDL_Rect rect;
