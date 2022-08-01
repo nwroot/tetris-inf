@@ -49,6 +49,11 @@ struct tetris_state {
     
     uint32_t gravity_period;
     uint32_t speed_mult;
+    bool time_stop;
+    bool just_stopped;
+    bool just_resumed;
+    uint32_t time_stop_left;
+    uint32_t time_stop_max;
     //struct tetris_music *music;
 };
 

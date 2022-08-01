@@ -21,8 +21,10 @@ int main() {
     Mix_Music *backgroundsound = Mix_LoadMUS("Tetris 99 - Main Theme [TubeRipper.com].wav");
 
     
-    SDL_Window *window = SDL_CreateWindow("Test", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1366, 768, SDL_WINDOW_OPENGL);
+    SDL_Window *window = SDL_CreateWindow("Tetris", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1366, 768, SDL_WINDOW_OPENGL);
     SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+    
+    SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
     
     struct tetris_state state;
     state.grid = malloc(sizeof(struct tetris_slot) * 16 * 10);
@@ -42,6 +44,12 @@ int main() {
     
     state.gravity_period = 60;
     state.speed_mult = 1;
+    
+    state.time_stop = false;
+    state.just_stopped = false;
+    state.just_resumed = false;
+    state.time_stop_left = 500;
+    state.time_stop_max = 500;
 
     tetris_new_piece(&state);
     bool loop = true;

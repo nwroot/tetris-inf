@@ -98,6 +98,8 @@ struct tetris_piece standard_pieces[7] = {
 };
 
 int tetris_step(struct tetris_state *tetris) {
+    tetris->just_stopped = false;
+    tetris->just_resumed = false;
     if(SDL_GetTicks() <= tetris->last_tick_ms + MS_PER_TICK) {
         return 2;
     }
@@ -111,7 +113,11 @@ int tetris_step(struct tetris_state *tetris) {
             case SDL_KEYDOWN:
                 switch(event.key.keysym.sym) {
                     case SDLK_UP:
-                        // Disallowed
+                        if(tetris->time_stop) {
+                            tetris->curr_y -= 1;
+                            int res = check_collision(&tetris->curr, tetris);
+                            if(res == 2 || res == 3) tetris->curr_y += 1;
+                        }
                         break;
                     case SDLK_LEFT:
                         tetris->curr_x -= 1;
@@ -122,7 +128,16 @@ int tetris_step(struct tetris_state *tetris) {
                         if(check_collision(&tetris->curr, tetris)) tetris->curr_x -= 1;
                         break;
                     case SDLK_DOWN:
-                        //tetris->speed_mult = 2;
+                        if(tetris->time_stop) {
+                            tetris->curr_y += 1;
+                            int res = check_collision(&tetris->curr, tetris);
+                            if(res == 2 || res == 3) tetris->curr_y -= 1;
+                        }
+                        break;
+                    case SDLK_q:
+                        tetris->time_stop = !tetris->time_stop;
+                        if(!tetris->time_stop) tetris->just_resumed = true;
+                        else tetris->just_stopped = true;
                         break;
                     case SDLK_SPACE:
                         do_rot_matrix(&tetris->curr);
@@ -139,11 +154,13 @@ int tetris_step(struct tetris_state *tetris) {
     
     const uint8_t *keys = SDL_GetKeyboardState(NULL);
     
-    if(keys[SDL_SCANCODE_DOWN]) tetris->speed_mult = 6;
+    if(keys[SDL_SCANCODE_DOWN] && !tetris->time_stop) tetris->speed_mult = 6;
+    
+    if(tetris->time_stop_left <= 0) tetris->time_stop = 0;
         
-    //printf("Tick: %d, Speed: %d, Mult: %d\n", tetris->last_tick, tetris->gravity_period, tetris->speed_mult);
+    printf("Tick: %d, Speed: %d, Mult: %d, Stop: %d, Stop Left: %d\n", tetris->last_tick, tetris->gravity_period, tetris->speed_mult, tetris->time_stop, tetris->time_stop_left);
     // move piece
-    if(tetris->last_tick % (tetris->gravity_period / tetris->speed_mult) == 0) {
+    if(!tetris->time_stop && !tetris->just_resumed && tetris->last_tick % (tetris->gravity_period / tetris->speed_mult) == 0) {
         tetris->curr_y += 1;
         int res = check_collision(&tetris->curr, tetris);
         if(res == 1 || res == 2) { // settle
@@ -152,7 +169,15 @@ int tetris_step(struct tetris_state *tetris) {
             tetris_clear_lines(tetris);
             tetris_new_piece(tetris);
         }
+    } else if(tetris->just_resumed) {
+        int res = check_collision(&tetris->curr, tetris);
+        if(res == 1 || res == 2) {
+            tetris_settle(tetris);
+            tetris_clear_lines(tetris);
+            tetris_new_piece(tetris);
+        }
     }
+    if(tetris->time_stop) tetris->time_stop_left--;
     tetris->speed_mult = 1;
     tetris->last_tick++;
     tetris->last_tick_ms = SDL_GetTicks();
@@ -203,7 +228,8 @@ void tetris_new_piece(struct tetris_state *tetris) {
 
 void tetris_render(struct tetris_state *tetris, SDL_Renderer *renderer) {
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-    draw_grid(tetris, renderer, 1);
+    draw_bg(tetris, renderer);
+    draw_grid(tetris, renderer, 1, 1);
 }
 
 void rotar(int *mat, int n){ 
