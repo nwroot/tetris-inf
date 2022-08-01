@@ -116,6 +116,7 @@ int tetris_step(struct tetris_state *tetris) {
                         if(tetris->time_stop) {
                             tetris->curr_y -= 1;
                             int res = check_collision(&tetris->curr, tetris);
+                            //printf("COLLISION: %d\n", res);
                             if(res == 2 || res == 3) tetris->curr_y += 1;
                         }
                         break;
@@ -124,7 +125,8 @@ int tetris_step(struct tetris_state *tetris) {
                         if(check_collision(&tetris->curr, tetris) && !tetris->time_stop) tetris->curr_x += 1;
                         else {
                             int res = check_collision(&tetris->curr, tetris);
-                            if(res == 2 || res == 3) tetris->curr_y += 1;
+                            //printf("COLLISION: %d\n", res);
+                            if(res == 2 || res == 3) tetris->curr_x += 1;
                         }
                         break;
                     case SDLK_RIGHT:
@@ -132,7 +134,7 @@ int tetris_step(struct tetris_state *tetris) {
                         if(check_collision(&tetris->curr, tetris) && !tetris->time_stop) tetris->curr_x -= 1;
                         else {
                             int res = check_collision(&tetris->curr, tetris);
-                            if(res == 2 || res == 3) tetris->curr_y -= 1;
+                            if(res == 2 || res == 3) tetris->curr_x -= 1;
                         }
                         break;
                     case SDLK_DOWN:
@@ -166,7 +168,7 @@ int tetris_step(struct tetris_state *tetris) {
     
     if(tetris->time_stop_left <= 0) tetris->time_stop = 0;
         
-    printf("Tick: %d, Speed: %d, Mult: %d, Stop: %d, Stop Left: %d\n", tetris->last_tick, tetris->gravity_period, tetris->speed_mult, tetris->time_stop, tetris->time_stop_left);
+    //printf("Tick: %d, Speed: %d, Mult: %d, Stop: %d, Stop Left: %d\n", tetris->last_tick, tetris->gravity_period, tetris->speed_mult, tetris->time_stop, tetris->time_stop_left);
     // move piece
     if(!tetris->time_stop && !tetris->just_resumed && tetris->last_tick % (tetris->gravity_period / tetris->speed_mult) == 0) {
         tetris->curr_y += 1;
@@ -224,12 +226,29 @@ int tetris_clear_lines(struct tetris_state *tetris) {
     tetris->lines += lines;
     tetris->score += lines * 100;
     
+    switch(lines) {
+        case 1:
+            tetris->time_stop_left += 10;
+            break;
+        case 2:
+            tetris->time_stop_left += 30;
+            break;
+        case 3:
+            tetris->time_stop_left += 70;
+            break;
+        case 4:
+            tetris->time_stop_left += 200;
+            break;
+    }
+        
+    if(tetris->time_stop_left > tetris->time_stop_max) tetris->time_stop_left = tetris->time_stop_max;
     printf("Lines: %d, Score: %d\n", tetris->lines, tetris->score);
     return lines;
 }
 
 void tetris_new_piece(struct tetris_state *tetris) {
-    tetris->curr = standard_pieces[rand() % 7];
+    tetris->curr = tetris->next;
+    tetris->next = standard_pieces[rand() % 7];
     tetris->curr_x = tetris->width/2;
     tetris->curr_y = 0;
 }
@@ -276,7 +295,7 @@ void do_rot_matrix(struct tetris_piece *piece) {
 // returns 1 on collision with other pieces
 // returns 2 on collisions with bottom of grid
 // returns 3 on horizontal out of bounds
-bool check_collision(struct tetris_piece *piece, struct tetris_state *state) {
+int check_collision(struct tetris_piece *piece, struct tetris_state *state) {
     for(int i = 0; i < piece->size_y; i++) {
         for(int j = 0; j < piece->size_x; j++) {
             if(piece->piece_def[i][j] && state->curr_y + i >= state->height) return 2;

@@ -51,6 +51,7 @@ int main() {
     state.time_stop_left = 500;
     state.time_stop_max = 500;
 
+    tetris->next = standard_pieces[rand() % 7];
     tetris_new_piece(&state);
     bool loop = true;
 

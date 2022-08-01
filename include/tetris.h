@@ -34,7 +34,7 @@ struct tetris_state {
     
     
     struct tetris_piece curr;
-    struct queue *piece_queue;
+    struct tetris_piece next;
     int32_t curr_x;
     int32_t curr_y;
     
@@ -61,4 +61,4 @@ int tetris_step(struct tetris_state *tetris);
 void tetris_render(struct tetris_state *tetris, SDL_Renderer *renderer);
 void do_rot_matrix(struct tetris_piece *piece);
 extern struct tetris_piece standard_pieces[7];
-bool check_collision(struct tetris_piece *piece, struct tetris_state *state);
+int check_collision(struct tetris_piece *piece, struct tetris_state *state);
